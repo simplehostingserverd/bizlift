@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 // Admin: Update program
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -16,9 +16,10 @@ export async function PATCH(
     }
 
     const body = await req.json();
+    const { id } = await params;
 
     const program = await prisma.fundingProgram.update({
-      where: { id: params.id },
+      where: { id },
       data: body,
     });
 
@@ -35,7 +36,7 @@ export async function PATCH(
 // Admin: Delete program
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -44,8 +45,10 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
+    const { id } = await params;
+
     await prisma.fundingProgram.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ message: "Program deleted successfully" });
