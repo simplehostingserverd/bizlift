@@ -1,18 +1,15 @@
 import Stripe from "stripe";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("STRIPE_SECRET_KEY is not defined in environment variables");
-}
-
-// Initialize Stripe with a supported API version
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-  typescript: true,
-  appInfo: {
-    name: "BizLift",
-    version: "1.0.0",
-  },
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16",
+      typescript: true,
+      appInfo: {
+        name: "BizLift",
+        version: "1.0.0",
+      },
+    })
+  : null;
 
 export default stripe;
 

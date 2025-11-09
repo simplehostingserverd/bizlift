@@ -8,6 +8,13 @@ import prisma from "@/lib/prisma";
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
+  if (!stripe) {
+    return NextResponse.json(
+      { error: "Stripe is not configured" },
+      { status: 503 }
+    );
+  }
+
   const body = await req.text();
   const headersList = await headers();
   const signature = headersList.get("stripe-signature");
@@ -31,7 +38,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
+    event = stripe!.webhooks.constructEvent(
       body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET
@@ -118,7 +125,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         ? session.subscription
         : session.subscription.id;
 
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const subscription = await stripe!.subscriptions.retrieve(subscriptionId);
     await handleSubscriptionChange(subscription);
   }
 
@@ -132,7 +139,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     const priceId = session.metadata?.priceId;
 
     if (priceId) {
-      const price = await stripe.prices.retrieve(priceId);
+      const price = await stripe!.prices.retrieve(priceId);
 
       await prisma.purchase.create({
         data: {
