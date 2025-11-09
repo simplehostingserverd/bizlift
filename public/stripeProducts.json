@@ -1,0 +1,86 @@
+[
+  {
+    "id": "prod_premium_monthly",
+    "name": "BizLift Premium - Monthly",
+    "type": "subscription",
+    "price": {
+      "priceId": "price_premium_monthly",
+      "unit_amount": 2999,
+      "currency": "usd",
+      "recurring": {
+        "interval": "month",
+        "interval_count": 1
+      }
+    },
+    "features": [
+      "Unlimited funding program matches",
+      "Priority customer support",
+      "One monthly funding coach session (30 min)",
+      "Advanced analytics dashboard",
+      "Application tracking and reminders",
+      "Early access to new funding programs"
+    ],
+    "description": "Get unlimited access to our complete funding database, priority support, and monthly coaching sessions to maximize your funding success."
+  },
+  {
+    "id": "prod_premium_annual",
+    "name": "BizLift Premium - Annual",
+    "type": "subscription",
+    "price": {
+      "priceId": "price_premium_annual",
+      "unit_amount": 29999,
+      "currency": "usd",
+      "recurring": {
+        "interval": "year",
+        "interval_count": 1
+      }
+    },
+    "features": [
+      "All Premium Monthly features",
+      "2 months free (save $59.98)",
+      "Quarterly business health reports",
+      "12 funding coach sessions per year",
+      "Dedicated account manager",
+      "Custom funding strategy document"
+    ],
+    "description": "Best value! Annual subscription with 2 months free, quarterly business reviews, and a dedicated account manager."
+  },
+  {
+    "id": "prod_onboarding_boost",
+    "name": "Onboarding Boost",
+    "type": "one_time",
+    "price": {
+      "priceId": "price_onboarding_boost",
+      "unit_amount": 9999,
+      "currency": "usd"
+    },
+    "features": [
+      "Hands-on onboarding assistance",
+      "Personalized funding strategy session (60 min)",
+      "Business profile optimization",
+      "Priority funding search and matching",
+      "Application readiness assessment",
+      "Custom recommendation report"
+    ],
+    "description": "One-time deep-dive service to accelerate your onboarding and create a customized funding strategy for your business."
+  },
+  {
+    "id": "prod_application_support",
+    "name": "Application Support Package",
+    "type": "one_time",
+    "price": {
+      "priceId": "price_application_support",
+      "unit_amount": 14999,
+      "currency": "usd"
+    },
+    "features": [
+      "Application review and editing (up to 3 applications)",
+      "Document preparation assistance",
+      "Business plan review and feedback",
+      "Financial projections review",
+      "Interview preparation (if required)",
+      "Email support throughout application process"
+    ],
+    "description": "Professional support to help you prepare and submit strong funding applications with higher success rates."
+  }
+]

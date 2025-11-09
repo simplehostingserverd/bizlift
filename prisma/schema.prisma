@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String           @id @default(cuid())
+  email          String           @unique
+  password       String
+  role           String           @default("client") // client | admin
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  business       BusinessProfile?
+  stripeCustomer Customer?
+  recommendations Recommendation[]
+
+  @@index([email])
+}
+
+model BusinessProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  businessName   String
+  industry       String
+  location       String
+  annualRevenue  Float
+  employees      Int
+  yearsActive    Int
+  fundingNeed    Float
+  legalStructure String   // LLC, Corporation, Sole Proprietorship, Partnership
+  creditScore    Int?     // Optional: 300-850
+  hasCollateral  Boolean  @default(false)
+  description    String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([industry])
+  @@index([location])
+}
+
+model FundingProgram {
+  id              String           @id @default(cuid())
+  name            String
+  provider        String // Government, Bank, Private Lender, VC, etc.
+  type            String // Grant, Loan, Tax Credit, Equity
+  minAmount       Float
+  maxAmount       Float
+  industries      String[] // Array of industries
+  minRevenue      Float?
+  maxRevenue      Float?
+  minEmployees    Int?
+  maxEmployees    Int?
+  minYearsActive  Int?
+  location        String? // Specific to state/region or "National"
+  creditScoreMin  Int?
+  requiresCollateral Boolean @default(false)
+  interestRate    Float?
+  repaymentTerms  String? @db.Text
+  eligibility     String  @db.Text
+  applicationUrl  String
+  description     String  @db.Text
+  tags            String[] // e.g., ["women-owned", "minority-owned", "rural"]
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  recommendations Recommendation[]
+
+  @@index([type])
+  @@index([provider])
+  @@index([isActive])
+}
+
+model Recommendation {
+  id               String         @id @default(cuid())
+  userId           String
+  fundingProgramId String
+  matchScore       Float // 0-100 percentage match
+  reasons          String[] // Array of reasons for the match
+  status           String         @default("pending") // pending, applied, approved, rejected
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fundingProgram   FundingProgram @relation(fields: [fundingProgramId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, fundingProgramId])
+  @@index([userId])
+  @@index([matchScore])
+}
+
+// Stripe Integration Models
+
+model Customer {
+  id               String         @id @default(cuid())
+  stripeCustomerId String         @unique
+  userId           String         @unique
+  email            String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptions    Subscription[]
+  purchases        Purchase[]
+
+  @@index([stripeCustomerId])
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  stripeSubscriptionId String    @unique
+  customerId           String
+  priceId              String
+  productId            String
+  status               String // active, canceled, incomplete, incomplete_expired, past_due, trialing, unpaid
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean   @default(false)
+  canceledAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  customer             Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model Purchase {
+  id                String   @id @default(cuid())
+  stripePaymentIntent String? @unique
+  customerId        String
+  priceId           String
+  productId         String
+  amount            Int // Amount in cents
+  currency          String   @default("usd")
+  status            String // succeeded, pending, failed
+  createdAt         DateTime @default(now())
+  customer          Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([status])
+}
