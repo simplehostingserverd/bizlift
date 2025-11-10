@@ -78,6 +78,12 @@ export default function AdminLayout({
               >
                 Manage Users
               </Link>
+              <Link
+                href="/admin/settings"
+                className="block px-4 py-2 rounded-md hover:bg-gray-100"
+              >
+                Settings
+              </Link>
             </nav>
           </aside>
 

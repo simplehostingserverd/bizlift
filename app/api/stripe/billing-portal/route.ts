@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import stripe from "@/lib/stripe";
 import prisma from "@/lib/prisma";
+import { getSettings } from "@/lib/settings";
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,11 +36,12 @@ export async function POST(req: NextRequest) {
     }
 
     const { return_url } = await req.json();
+    const settings = await getSettings();
 
     // Create billing portal session
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customer.stripeCustomerId,
-      return_url: return_url || `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
+      return_url: return_url || settings.stripeBillingReturnUrl,
     });
 
     return NextResponse.json({

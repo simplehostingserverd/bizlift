@@ -145,3 +145,12 @@ model Purchase {
   @@index([customerId])
   @@index([status])
 }
+
+model Settings {
+  id                     String   @id @default("default")
+  appUrl                 String?
+  stripeSuccessUrl       String?
+  stripeCancelUrl        String?
+  stripeBillingReturnUrl String?
+  updatedAt              DateTime @updatedAt
+}

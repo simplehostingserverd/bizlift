@@ -18,6 +18,7 @@ async function main() {
     await prisma.businessProfile.deleteMany();
     await prisma.user.deleteMany();
     await prisma.fundingProgram.deleteMany();
+    await prisma.settings.deleteMany();
   }
 
   // Create admin user
@@ -156,6 +157,19 @@ async function main() {
     },
   });
   console.log("✅ Sample Stripe customer record created");
+
+  // Create default settings
+  console.log("⚙️  Creating default settings...");
+  await prisma.settings.create({
+    data: {
+      id: "default",
+      appUrl: null,
+      stripeSuccessUrl: null,
+      stripeCancelUrl: null,
+      stripeBillingReturnUrl: null,
+    },
+  });
+  console.log("✅ Default settings created");
 
   console.log("\n🎉 Database seeding completed successfully!");
   console.log("\n📝 Login credentials:");
